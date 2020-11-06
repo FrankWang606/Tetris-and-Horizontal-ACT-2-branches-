@@ -267,14 +267,13 @@ int main(void) {
 	Sprite spriteBlock(t2);
 	
 	
-	//生成第一个方块
+	
 	newBlock();
 	
 	Clock clock;
 	float timer = 0;   //total time
 
 
-	//进入游戏循环
 	while (window.isOpen()) {               
 		float time=clock.getElapsedTime().asSeconds();     
 		clock.restart();
