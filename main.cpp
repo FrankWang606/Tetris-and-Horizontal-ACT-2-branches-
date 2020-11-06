@@ -12,7 +12,7 @@ using namespace sf;
 
 
 int blocks[7][4] = {
-	{1,3,5,7},                                                   //I×ÖĞÎ·½¿é
+	{1,3,5,7},                                                   //block type
 	{2,4,5,7},
 	{3,5,4,6},
 	{3,5,4,7},
@@ -21,14 +21,14 @@ int blocks[7][4] = {
 	{2,3,4,5}
 };
 
-int BlockIndex;  //±íÊ¾µ±Ç°·½¿éÖÖÀà
-//ÓÎÏ·ÇøÓò
+int BlockIndex;  //current block type
+//game area
 const int ROW = 20;
 const int COL = 10;
 
 int table[ROW][COL]{ 0 };
 
-//ÓÎÏ··½¿éµÄ±íÊ¾
+
 struct Point {
 	int x;
 	int y;
@@ -36,19 +36,19 @@ struct Point {
 Point curBlock[4];
 Point bakBlock[4];
 
-Sound sou;   //ÒôĞ§
+Sound sou;   //sound effect
 
-//±íÊ¾ÏÂ½µËÙ¶È
+//drop speed
 const float speed_normal = 0.4;
 const float speed_quick = 0.1;
 float delay=speed_normal;
 
 void newBlock() {
-	//»ñÈ¡Ò»¸öËæ»ú·½¿é
-	BlockIndex = 1 + rand() % 7;  //randËæ»úÊı£¬%7ÊÇ0-6£¬+1ÊÇ1-7
+	//get random type block
+	BlockIndex = 1 + rand() % 7; 
 	int n = BlockIndex - 1;
 	for (int i = 0; i < 4; i++) {
-		curBlock[i].x = blocks[n][i] % 2;        //x×ø±êµÈÓÚblocksµÄÖµ%2£»
+		curBlock[i].x = blocks[n][i] % 2;        
 		curBlock[i].y = blocks[n][i] / 2;
 	}
 }
@@ -66,7 +66,7 @@ void drop() {
 		curBlock[i].y += 1;
 	}
 	if (check() == false) {
-		//¹Ì¶¨»¯
+		
 		for (int i = 0; i < 4; i++) {
 			table[bakBlock[i].y][bakBlock[i].x] = BlockIndex;
 		}
@@ -99,7 +99,7 @@ void dorotate() {
 		curBlock[i].x = p.x - tmp.y + p.y;
 		curBlock[i].y = tmp.x - p.x + p.y;
 	}
-	//¼ì²éºÏ·¨ĞÔ
+	
 	if (!check()) {
 		for (int i = 0; i < 4; i++) {
 			curBlock[i] = bakBlock[i];
@@ -107,11 +107,11 @@ void dorotate() {
 	}
 }
 
-void keyEvent(RenderWindow *window) {                                        //´¦Àí°´¼üµÄº¯Êı
-	bool rotate = false; // ±íÊ¾ÊÇ·ñĞı×ª
-	int dx = 0;   //Æ«ÒÆÁ¿
-	Event e;    //ÊÂ¼ş±äÁ¿
-	while (window->pollEvent(e)) {                              //pollevent °ÑÊÂ¼ş´ÓWindowÖĞ(ÊÂ¼ş¶ÓÁĞ£©ÄÃ³ö±£´æµ½e,Èç¹ûÃ»ÊÂ¼ş¾Í·µ»Øfalse
+void keyEvent(RenderWindow *window) {                                        //handle key press
+	bool rotate = false; 
+	int dx = 0;   
+	Event e;    
+	while (window->pollEvent(e)) {                              
 		if (e.type == Event::Closed) {
 			window->close();
 		}
@@ -130,7 +130,7 @@ void keyEvent(RenderWindow *window) {                                        //´
 				break;
 			}
 		}
-		//ÏÂ½µ
+	
 		if (Keyboard::isKeyPressed(Keyboard::Down)) {
 			delay = speed_quick;
 		}
@@ -157,7 +157,7 @@ void clearLine(int &point) {
 			table[k][j] = table[i][j];
 		}
 		if (count < COL) {
-			k--;           //ÖØĞ´£¬Ïû³ıºóÒÔ´ËÍùÏÂÒÆ¶¯Ò»ĞĞ
+			k--;    
 		}
 		else {
 			point += 10;
@@ -180,14 +180,14 @@ void drawflame(Sprite* spriteframe, RenderWindow* window) {
 }
 
 void drawBlocks(Sprite *spriteBlock,RenderWindow *window) {
-	//ÒÑ¾­½µÂäµÄ·½¿é
+	
 	for (int i = 0; i < ROW; i++) {
 		for (int j = 0; j < COL; j++) {
 			if (table[i][j] == 1 || table[i][j] == 2) {
-				//ÏÈÊ¹ÓÃsprite±íÊ¾ÍêÕûÍ¼Æ¬,È»ºó½ØÈ¡²¿·Ö
+				
 				spriteBlock->setTextureRect(IntRect(42, 4, 18, 18));
 				spriteBlock->setPosition(j * 18, i * 18);
-				//ÉèÖÃÆ«ÒÆÁ¿
+			
 				spriteBlock->move(133, 31);
 				window->draw(*spriteBlock);
 			}
@@ -206,7 +206,7 @@ void drawBlocks(Sprite *spriteBlock,RenderWindow *window) {
 
 		}
 	}
-	//ÕıÔÚ½µÂäµÄ
+	
 	for (int i = 0; i < 4; i++) {
 		if (BlockIndex == 1 || BlockIndex == 2) {
 			spriteBlock->setTextureRect(IntRect(42, 4, 18, 18));
@@ -230,35 +230,34 @@ void drawBlocks(Sprite *spriteBlock,RenderWindow *window) {
 }
 
 int main(void) {
-	srand(time(0));          //Éú³ÉÒ»¸öËæ»úÖÖ×Ó
-	//±³¾°ÒôÀÖ
+	srand(time(0));          
+	//bgm
 	Music bgm;
 	bgm.openFromFile("bgm.wav");
-	bgm.setLoop(true);   //ÉèÖÃÑ­»·²¥·Å£»
+	bgm.setLoop(true);   
 	bgm.play();
 	int points = 0;
 	std::string output;
 	
 
-	SoundBuffer xiaochu;           //»º´æÒôĞ§
+	SoundBuffer xiaochu;         
 	xiaochu.loadFromFile("peng.wav");
 	sou.setBuffer(xiaochu);
 
 	
-	Font font;   //×ÖÌå
+	Font font;   
 	font.loadFromFile("font1.ttf");
 	
 
-	//ÏÈ´´½¨´°¿Ú
+	
 	RenderWindow window(
-		VideoMode(611, 416),    //´°¿ÚÄ£Ê½ÏñËØ´óĞ¡
-		"Rock-2020");    //´°¿Ú±êÌâ
+		VideoMode(611, 416),   
+		"Rock-2020");   
 
-	// ÔØÈë±³¾° sprite ÓÃÀ´´¦ÀíÈËÎï£¬Í¼Æ¬
-	Texture t1;                //°ÑÍ¼Æ¬ÎÄ¼ş¼ÓÔØµ½ÄÚ´æ
+	Texture t1;
 	t1.loadFromFile("image/background.jpg");
-	Sprite spritebg(t1);        //¸ù¾İÍ¼Æ¬À´´´½¨sprite
-	//äÖÈ¾sprite
+	Sprite spritebg(t1);        
+
 	Texture t3;
 	t3.loadFromFile("image/flame.png");
 	Sprite spriteflame(t3);
@@ -268,35 +267,34 @@ int main(void) {
 	Sprite spriteBlock(t2);
 	
 	
-	//Éú³ÉµÚÒ»¸ö·½¿é
+	//ç”Ÿæˆç¬¬ä¸€ä¸ªæ–¹å—
 	newBlock();
 	
-	//¼ÆÊ±Æ÷clock×öÊ±¼äÅĞ¶Ï
 	Clock clock;
-	float timer = 0;   //×ÜÊ±¼ä
+	float timer = 0;   //total time
 
 
-	//½øÈëÓÎÏ·Ñ­»·
-	while (window.isOpen()) {                //Èç¹û´°¿Ú»¹ÔÚ´ò¿ª×´Ì¬
-		float time=clock.getElapsedTime().asSeconds();     //»ñÈ¡´Óclock±»Æô¶¯»òÕßÖØÆôµ½ÏÖÔÚµÄÊ±¼ä
+	//è¿›å…¥æ¸¸æˆå¾ªç¯
+	while (window.isOpen()) {               
+		float time=clock.getElapsedTime().asSeconds();     
 		clock.restart();
 		timer += time;
 		if (timer > delay) {
-			drop();   //½µÂä
+			drop();   
 			timer = 0;
 		}
-		//Ïû³ı²¢µÃ·Ö´¦Àí
+		
 		clearLine(points);
 		output = std::to_string(points);
-		//µÈ´ıÓÃ»§°´¼ü
+		
 		keyEvent(&window);
-		//äÖÈ¾sprite
+	
 		window.draw(spritebg);
 		
 		
 		Text score(output, font, 75);
 		drawtext(&score,&window,output);
-		//»æÖÆ·½¿é
+		
 		drawBlocks(&spriteBlock,&window);
 		drawflame(&spriteflame, &window);
 
