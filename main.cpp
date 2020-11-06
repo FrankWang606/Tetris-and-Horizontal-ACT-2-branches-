@@ -25,8 +25,8 @@ SDL_Renderer* render;
 struct sprite {
 	SDL_Texture* texture;
 	std::vector<SDL_Rect> spriteRects;
-	Uint32 lastUpdate;             //上一次刷新时间
-	Uint32 lastframe;   //上一次第几帧
+	Uint32 lastUpdate;            
+	Uint32 lastframe;   
 
 };
 struct sprite hero; struct sprite mons;
@@ -62,8 +62,8 @@ void init(){
 	gWindow= SDL_CreateWindow("WITCH", SDL_WINDOWPOS_UNDEFINED,//init position(undefine) both x and y
 		SDL_WINDOWPOS_UNDEFINED, 1280, 720, SDL_WINDOW_SHOWN);//status use to shown
 	gSurface = SDL_GetWindowSurface(gWindow);
-	//初始化渲染器
-	render = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);                      //创建指定窗口的渲染器,-1 is 第一个请求,硬件加速
+	
+	render = SDL_CreateRenderer(gWindow, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);                     
 }
 
 void loadsource() {
@@ -71,17 +71,17 @@ void loadsource() {
 	
 }
 SDL_Texture* loadImage(const char* file) {
-	SDL_Texture* texture= IMG_LoadTexture(render, file);                                //把指定图片渲染给指定渲染器
+	SDL_Texture* texture= IMG_LoadTexture(render, file);                               
 	return texture;
 }
 void showImage(int x,int y,const char* file) {
 	SDL_Texture* image= loadImage(file);
-	SDL_Rect pos;   //包含宽度高度
+	SDL_Rect pos;   
 	pos.x = x;
 	pos.y = y;
-	SDL_QueryTexture(image, NULL, NULL, &pos.w, &pos.h);     //获取纹理的宽度高度
+	SDL_QueryTexture(image, NULL, NULL, &pos.w, &pos.h);   
 
-	SDL_RenderCopy(render, image, NULL, &pos);              //显示图片,纹理显示区域，目标区域
+	SDL_RenderCopy(render, image, NULL, &pos);              
 
 }
 
@@ -89,7 +89,7 @@ void close() {
 
 }
 void handlechar() {
-	//各个造型
+	
 	int width[6]{ 0,0,72,0,83,0 };
 	int diff[6]{ 0,0,11,0,-7,0 };
 	for (int i = 0; i < 6; i++) {
@@ -153,18 +153,18 @@ void animateMain() {
 	board[1] = 1;
 	boardM[39] = 3;
 	int curP, curA;
-	//使用代码切割人物素材
+	
 	handlechar();
 	SDL_Event e1;
 	int stay = 0;
 	SDL_Texture* bg1 = IMG_LoadTexture(render, "image/bg1.bmp");
 	bool animateRun = true;
 	while (animateRun == true) {
-		Uint32 current = SDL_GetTicks();    //返回从sdl初始化后到现在有多少ms
+		Uint32 current = SDL_GetTicks();    
 		float interval = (current - hero.lastUpdate) / 1000.0f;
-		if (interval >= (1.0 / fps)) {  //需要刷新
+		if (interval >= (1.0 / fps)) { 
 			hero.lastframe += 1;
-			hero.lastframe = hero.lastframe % 6;  //防止超过最大图片数
+			hero.lastframe = hero.lastframe % 6;  
 			hero.lastUpdate = current;
 			stay = hero.lastframe;
 
@@ -246,7 +246,7 @@ void animateMain() {
 
 
 int main(int argc, char* argv[]) {
-	init();    //初始化
+	init();    
 	
 	showImage(0, 0, "image/witch.bmp");
 	showImage(120, 52, "image/biaoti.gif");
@@ -258,9 +258,9 @@ int main(int argc, char* argv[]) {
 	handlechar();
 	SDL_Event e;   //define event
 	while (stop == false) {
-		while (SDL_PollEvent(&e) != 0) {         //从队列中获取一个事件
+		while (SDL_PollEvent(&e) != 0) {        
 			if (e.type == SDL_KEYDOWN) {
-				if (e.key.keysym.sym == SDLK_ESCAPE) {         //如果按下esc
+				if (e.key.keysym.sym == SDLK_ESCAPE) {         
 					stop = true;
 					break;
 				}
