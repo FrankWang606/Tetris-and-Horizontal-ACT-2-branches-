@@ -7,3 +7,4 @@ Tetris     using SFML
 
 branch2:
 Horizontal ACT   using SDL
+![image](https://github.com/FrankWang606/Tetris-and-Horizontal-ACT-2-branches-/blob/FrankWang606-ACT/preview/4.jpg)
